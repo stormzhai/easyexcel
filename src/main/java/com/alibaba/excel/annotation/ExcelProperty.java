@@ -35,4 +35,13 @@ public @interface ExcelProperty {
       * @return 日期格式化
       */
      String format() default "";
+
+     /**
+      * 枚举
+      *
+      * 例如：男_1,女_2
+      *
+      * @return
+      */
+     String replace() default "";
 }

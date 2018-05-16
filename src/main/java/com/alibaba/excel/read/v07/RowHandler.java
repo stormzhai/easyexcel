@@ -1,19 +1,21 @@
 package com.alibaba.excel.read.v07;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.alibaba.excel.annotation.FieldType;
-import com.alibaba.excel.util.ExcelXmlConstants;
 import com.alibaba.excel.read.context.AnalysisContext;
 import com.alibaba.excel.read.event.AnalysisEventRegisterCenter;
 import com.alibaba.excel.read.event.OneRowAnalysisFinishEvent;
+import com.alibaba.excel.util.ExcelXmlConstants;
 import com.alibaba.excel.util.PositionUtils;
-
+import com.alibaba.excel.util.TypeUtil;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import static com.alibaba.excel.util.ExcelXmlConstants.CELL_VALUE_TAG;
 import static com.alibaba.excel.util.ExcelXmlConstants.CELL_VALUE_TAG_1;
@@ -90,10 +92,10 @@ public class RowHandler extends DefaultHandler {
             if (cellType != null && cellType.equals("s")) {
                 currentCellType = FieldType.STRING;
             }
-            //if ("6".equals(attributes.getValue("s"))) {
-            //    // date
-            //    currentCellType = FieldType.DATE;
-            //}
+            if ("1".equals(attributes.getValue("s"))) {
+                // date
+                currentCellType = FieldType.DATE;
+            }
 
         }
     }
@@ -111,12 +113,12 @@ public class RowHandler extends DefaultHandler {
                     currentCellValue = sharedStringList.get(idx);
                     currentCellType = FieldType.EMPTY;
                     break;
-                //case DATE:
-                //    Date dateVal = HSSFDateUtil.getJavaDate(Double.parseDouble(currentCellValue),
-                //        analysisContext.use1904WindowDate());
-                //    currentCellValue = TypeUtil.getDefaultDateString(dateVal);
-                //    currentCellType = FieldType.EMPTY;
-                //    break;
+                case DATE:
+                    Date dateVal = HSSFDateUtil.getJavaDate(Double.parseDouble(currentCellValue),
+                        false);
+                    currentCellValue = TypeUtil.getDefaultDateString(dateVal);
+                    currentCellType = FieldType.EMPTY;
+                    break;
             }
             curRowContent[curCol] = currentCellValue;
         } else if (CELL_VALUE_TAG_1.equals(name)) {

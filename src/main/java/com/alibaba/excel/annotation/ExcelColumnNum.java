@@ -32,4 +32,13 @@ public @interface ExcelColumnNum {
      * @return format
      */
     String format() default "";
+
+    /**
+     * 枚举
+     *
+     * 例如：男_1,女_2
+     *
+     * @return
+     */
+    String replace() default "";
 }

@@ -1,16 +1,19 @@
 package com.alibaba.excel.util;
 
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 /**
  * 类型转换工具类
@@ -24,6 +27,7 @@ public class TypeUtil {
     static {
         DATE_FORMAT_LIST.add(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"));
         DATE_FORMAT_LIST.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        DATE_FORMAT_LIST.add(new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH));
     }
 
     public static Object convert(String value, Field field, String format, boolean us) {
@@ -63,6 +67,25 @@ public class TypeUtil {
             if (BigDecimal.class.equals(field.getType())) {
                 return new BigDecimal(value);
             }
+
+        }
+        return null;
+    }
+
+    public static Object convert(String value, Field field, String format, String replace, boolean us) {
+
+        if (isNotEmpty(value)) {
+
+            if (isNotEmpty(replace)) {
+                String[] enums = replace.split(",");
+                Map<String, String> result = new HashMap<String, String>();
+                for(int j=0;j<enums.length;j++) {
+                    String[] str = enums[j].split("_");
+                    result.put(str[0], str[1]);
+                }
+                value = result.get(value);
+            }
+            return convert(value, field, format, us);
 
         }
         return null;

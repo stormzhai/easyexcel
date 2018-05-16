@@ -28,6 +28,7 @@ public class ExcelColumnProperty implements Comparable<ExcelColumnProperty> {
      * 日期类型format 如："yyyy-MM-dd HH:mm:ss"
      */
     private String format;
+    private String replace;
 
     public String getFormat() {
         return format;
@@ -59,6 +60,14 @@ public class ExcelColumnProperty implements Comparable<ExcelColumnProperty> {
 
     public void setHead(List<String> head) {
         this.head = head;
+    }
+
+    public String getReplace() {
+        return replace;
+    }
+
+    public void setReplace(String replace) {
+        this.replace = replace;
     }
 
     public int compareTo(ExcelColumnProperty o) {

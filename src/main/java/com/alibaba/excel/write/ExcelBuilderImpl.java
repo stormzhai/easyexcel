@@ -1,20 +1,24 @@
 package com.alibaba.excel.write;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-
-import com.alibaba.excel.write.context.GenerateContext;
-import com.alibaba.excel.write.context.GenerateContextImpl;
 import com.alibaba.excel.metadata.ExcelColumnProperty;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.metadata.Table;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.util.EasyExcelTempFile;
-
+import com.alibaba.excel.util.TypeUtil;
+import com.alibaba.excel.write.context.GenerateContext;
+import com.alibaba.excel.write.context.GenerateContextImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jipengfei
@@ -85,6 +89,22 @@ public class ExcelBuilderImpl implements ExcelBuilder {
             String cellValue = null;
             try {
                 cellValue = BeanUtils.getProperty(oneRowData, excelHeadProperty.getField().getName());
+                if (!excelHeadProperty.getFormat().equals("")
+                        && Date.class.equals(excelHeadProperty.getField().getType())) {
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(excelHeadProperty.getFormat());
+                    cellValue = simpleDateFormat.format(TypeUtil.getSimpleDateFormatDate(cellValue, excelHeadProperty.getFormat()));
+                }
+                if (!excelHeadProperty.getReplace().equals("")) {
+                    String replace = excelHeadProperty.getReplace();
+                    String[] enums = replace.split(",");
+                    Map<String, String> result = new HashMap<String, String>();
+                    for(int j=0;j<enums.length;j++) {
+                        String[] str = enums[j].split("_");
+                        result.put(str[1], str[0]);
+                    }
+                    cellValue = result.get(cellValue);
+
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
